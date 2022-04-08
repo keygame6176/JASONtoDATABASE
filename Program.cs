@@ -16,23 +16,31 @@ namespace Transfer2Raccoon
 	{
 		// Token: 0x0600000D RID: 13 RVA: 0x00002890 File Offset: 0x00000A90
 		/*定時刪除Log 模組*/
-		public static void DeleteFile(string fileDirect,int saveDay)
+		public static void DeleteFile(string fileDirect,int saveDay,string filetype)
 
 		{
-
-			DateTime nowTime = DateTime.Now;
-
-			string[] files = Directory.GetFiles(fileDirect, "*.txt", SearchOption.AllDirectories);  //獲取該目錄下所有 .txt文件
-			foreach (string file in files)
+			if (filetype == "")
 			{
-				FileInfo fileInfo = new FileInfo(file);
-				TimeSpan t = nowTime - fileInfo.CreationTime;  //當前時間  減去 文件創建時間
-				int day = t.Days;
-				if (day > saveDay)   //保存的時間 ；  單位：天
-				{
-					File.Delete(file);  //刪除超過時間的文件
-				}
+				filetype = "*.*";
 			}
+			else
+			{
+				filetype = "*." + filetype;
+			}
+				DateTime nowTime = DateTime.Now;
+
+				string[] files = Directory.GetFiles(fileDirect, filetype, SearchOption.AllDirectories);  //獲取該目錄下所有 .txt文件
+				foreach (string file in files)
+				{
+					FileInfo fileInfo = new FileInfo(file);
+					TimeSpan t = nowTime - fileInfo.CreationTime;  //當前時間  減去 文件創建時間
+					int day = t.Days;
+					if (day > saveDay)   //保存的時間 ；  單位：天
+					{
+						File.Delete(file);  //刪除超過時間的文件
+					}
+				}
+			
 
 		}
 		/*主程式*/
@@ -237,7 +245,8 @@ namespace Transfer2Raccoon
 					Console.WriteLine(ex2.Message);
 				}
 			}
-			DeleteFile(ProgrmPath + "\\Log",2);
+			DeleteFile(ProgrmPath + "\\Log\\",1,"txt");
+			Console.WriteLine(ProgrmPath + "\\Log\\");
 			Console.WriteLine("等待倒數..");
 			Program.aTimer.Start();
 		}
